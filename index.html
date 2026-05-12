@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QUEZ ONE 下载</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+        "PingFang SC", sans-serif;
+      background: #020617;
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .gradient-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.28), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(168,85,247,0.22), transparent 30%);
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(30px);
+      border-radius: 36px;
+      padding: 42px 28px;
+      text-align: center;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .logo-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 24px;
+    }
+
+    .logo-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 32px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      filter: blur(28px);
+      opacity: 0.55;
+      animation: pulse 3s ease infinite;
+    }
+
+    .logo {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 32px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .desc {
+      margin-top: 14px;
+      color: rgba(255,255,255,0.72);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .chip {
+      margin: 18px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 13px;
+      color: #93c5fd;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #60a5fa;
+      animation: blink 1.5s infinite;
+    }
+
+    .download-card {
+      margin-top: 30px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 18px;
+    }
+
+    .download-title {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 18px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .btn {
+      height: 58px;
+      border-radius: 18px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.2),
+        transparent
+      );
+      transition: 0.8s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-ios {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: white;
+      box-shadow: 0 10px 30px rgba(37,99,235,0.35);
+    }
+
+    .btn-android {
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .wechat-mask {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 999;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .wechat-mask.show {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wechat-arrow {
+      font-size: 72px;
+      margin-bottom: 24px;
+      animation: float 2s infinite ease-in-out;
+    }
+
+    .wechat-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .wechat-desc {
+      color: rgba(255,255,255,0.72);
+      line-height: 1.9;
+      font-size: 16px;
+    }
+
+    .footer {
+      margin-top: 24px;
+      color: rgba(255,255,255,0.35);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.4; }
+      50% { transform: scale(1.05); opacity: 0.7; }
+      100% { transform: scale(0.95); opacity: 0.4; }
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 34px 22px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+<div class="gradient-bg"></div>
+
+<div class="wechat-mask" id="wechatMask">
+  <div class="wechat-arrow">↗</div>
+  <div class="wechat-title">请在浏览器中打开</div>
+  <div class="wechat-desc">
+    微信内无法直接下载安装应用。<br />
+    请点击右上角菜单，选择：<br /><br />
+    <strong>“在浏览器中打开”</strong>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+
+    <div class="logo-wrap">
+      <div class="logo-glow"></div>
+      <div class="logo">
+        <img src="logo.png" alt="QUEZ ONE" />
+      </div>
+    </div>
+
+    <h1>QUEZ ONE</h1>
+
+    <div class="desc">
+      AI 智能录音与转写平台<br />
+      Bluetooth Recording · Cloud AI · Smart Summary
+    </div>
+
+    <div class="chip">
+      <div class="dot"></div>
+      正在识别设备并自动跳转
+    </div>
+
+    <div class="download-card">
+      <div class="download-title">
+        如果没有自动跳转，可手动下载安装
+      </div>
+
+      <div class="buttons">
+        <a
+          class="btn btn-ios"
+          href="https://testflight.apple.com/join/JzE8YS9E"
+        >
+           下载 iOS 测试版
+        </a>
+
+        <a
+          class="btn btn-android"
+          href="https://fir.xcxwo.com/u6j7sklq"
+        >
+          🤖 下载 Android 版本
+        </a>
+      </div>
+    </div>
+
+    <div class="footer">
+      iOS 版本需提前安装 TestFlight<br />
+      © 2026 QUEZ ONE
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const IOS_URL = 'https://testflight.apple.com/join/JzE8YS9E';
+  const ANDROID_URL = 'https://fir.xcxwo.com/u6j7sklq';
+
+  const ua = navigator.userAgent.toLowerCase();
+
+  const isWeChat = /micromessenger/.test(ua);
+
+  if (isWeChat) {
+    document.getElementById('wechatMask').classList.add('show');
+  } else {
+    setTimeout(() => {
+      if (/iphone|ipad|ipod/.test(ua)) {
+        window.location.href = IOS_URL;
+      } else if (/android/.test(ua)) {
+        window.location.href = ANDROID_URL;
+      }
+    }, 1800);
+  }
+
+  const canvas = document.getElementById('starCanvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const stars = [];
+
+  for (let i = 0; i < 120; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.6,
+      speed: Math.random() * 0.3 + 0.05,
+      opacity: Math.random()
+    });
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    stars.forEach((star) => {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
+      ctx.fill();
+
+      star.y += star.speed;
+
+      if (star.y > canvas.height) {
+        star.y = 0;
+        star.x = Math.random() * canvas.width;
+      }
+    });
+
+    requestAnimationFrame(drawStars);
+  }
+
+  drawStars();
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+
+</body>
+</html>
