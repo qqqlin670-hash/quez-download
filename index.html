@@ -778,6 +778,58 @@
     /* ============================================
        Animations on Load
        ============================================ */
+    /* ============================================
+       微信遮罩
+       ============================================ */
+    .wechat-mask {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 30px;
+      text-align: center;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wechat-mask.show {
+      display: flex;
+    }
+
+    .wechat-arrow {
+      font-size: 64px;
+      margin-bottom: 20px;
+      animation: float-wechat 2s infinite ease-in-out;
+      color: #93c5fd;
+    }
+
+    .wechat-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .wechat-desc {
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .wechat-desc strong {
+      color: #93c5fd;
+    }
+
+    @keyframes float-wechat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
     @keyframes fade-up {
       from { opacity: 0; transform: translateY(18px); }
       to { opacity: 1; transform: translateY(0); }
@@ -819,6 +871,17 @@
     <div class="glow one"></div>
     <div class="glow two"></div>
     <div class="glow three"></div>
+  </div>
+
+  <!-- 微信内打开遮罩 -->
+  <div class="wechat-mask" id="wechatMask">
+    <div class="wechat-arrow">↗</div>
+    <div class="wechat-title">请在浏览器中打开</div>
+    <div class="wechat-desc">
+      微信内无法直接下载安装应用。<br />
+      请点击右上角菜单，选择：<br /><br />
+      <strong>"在浏览器中打开"</strong>
+    </div>
   </div>
 
   <div class="container">
@@ -987,5 +1050,27 @@
       </footer>
     </div>
   </div>
+
+  <!-- 自动识别设备脚本 -->
+  <script>
+    const IOS_URL = 'https://testflight.apple.com/join/JzE8YS9E';
+    const ANDROID_URL = 'http://img.aiipu.com/app-release1778666515462.apk';
+
+    const ua = navigator.userAgent.toLowerCase();
+
+    // 微信内检测 → 显示提示遮罩
+    if (/micromessenger/.test(ua)) {
+      document.getElementById('wechatMask').classList.add('show');
+    } else {
+      // 延迟自动识别设备并跳转下载
+      setTimeout(() => {
+        if (/iphone|ipad|ipod/.test(ua)) {
+          window.location.href = IOS_URL;
+        } else if (/android/.test(ua)) {
+          window.location.href = ANDROID_URL;
+        }
+      }, 1800);
+    }
+  </script>
 </body>
 </html>
