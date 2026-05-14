@@ -2,406 +2,990 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QUEZ ONE 下载</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="description" content="星启·天籁 - AI 数字分身，录音转写、AI 总结、长期记忆与云端同步" />
+  <title>星启·天籁 · AI 数字分身</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <style>
+    /* ============================================
+       Design Tokens (RecVerse 设计系统)
+       ============================================ */
+    :root {
+      --ios-blue: #0a84ff;
+      --ios-bg: #eef0ff;
+      --ios-bg-light: #f4f8ff;
+      --ios-white: #ffffff;
+      --ios-text-primary: #0f172a;
+      --ios-text-secondary: #6b7280;
+      --ios-text-tertiary: #94a3b8;
+      --ios-card-radius: 24px;
+      --ios-card-radius-sm: 20px;
+      --ios-card-radius-xs: 16px;
+      --ios-page-gutter: 20px;
+      --ios-section-gap: 20px;
+      --ios-title-size: 32px;
+      --ios-body-size: 17px;
+      --ios-caption-size: 13px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --gradient-primary: linear-gradient(90deg, #4f72ff, #345dff);
+      --gradient-accent: linear-gradient(135deg, #4b6dff, #6366f1);
+      --shadow-card: 0 14px 34px rgba(148, 163, 184, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      --shadow-btn: 0 12px 26px rgba(63, 96, 255, 0.32);
+    }
+
+    /* ============================================
+       Reset & Base
+       ============================================ */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-        "PingFang SC", sans-serif;
-      background: #020617;
-      color: white;
-      min-height: 100vh;
-      overflow: hidden;
-      position: relative;
+    html {
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    canvas {
+    body {
+      font-family: "SF Pro Text", "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at 50% 0%, rgba(191, 219, 254, 0.62), transparent 40%),
+                  linear-gradient(180deg, #f6f9ff 0%, #eef4ff 36%, #f8fbff 100%);
+      color: var(--ios-text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ============================================
+       Background Glow Orbs
+       ============================================ */
+    .bg-glow {
       position: fixed;
       inset: 0;
+      pointer-events: none;
+      overflow: hidden;
       z-index: 0;
     }
 
-    .gradient-bg {
+    .glow {
       position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at top right, rgba(59,130,246,0.28), transparent 30%),
-        radial-gradient(circle at bottom left, rgba(168,85,247,0.22), transparent 30%);
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.50;
+    }
+
+    .glow.one {
+      width: 500px;
+      height: 500px;
+      background: rgba(10, 132, 255, 0.20);
+      top: -180px;
+      right: -120px;
+    }
+
+    .glow.two {
+      width: 400px;
+      height: 400px;
+      background: rgba(99, 102, 241, 0.18);
+      bottom: -100px;
+      left: -100px;
+    }
+
+    .glow.three {
+      width: 350px;
+      height: 350px;
+      background: rgba(191, 219, 254, 0.25);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ============================================
+       Container
+       ============================================ */
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: calc(var(--safe-top) + 16px) var(--ios-page-gutter) calc(var(--safe-bottom) + 32px);
+      position: relative;
       z-index: 1;
     }
 
-    .container {
-      position: relative;
-      z-index: 2;
-      min-height: 100vh;
+    /* ============================================
+       Main Card (软卡片容器)
+       ============================================ */
+    .main-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: var(--ios-card-radius);
+      padding: 40px 36px;
+      box-shadow: var(--shadow-card);
+    }
+
+    /* ============================================
+       Header / Logo
+       ============================================ */
+    .header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 440px;
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(30px);
-      border-radius: 36px;
-      padding: 42px 28px;
-      text-align: center;
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-    }
-
-    .logo-wrap {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 24px;
-    }
-
-    .logo-glow {
-      position: absolute;
-      inset: 0;
-      border-radius: 32px;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      filter: blur(28px);
-      opacity: 0.55;
-      animation: pulse 3s ease infinite;
+      margin-bottom: 48px;
     }
 
     .logo {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      border-radius: 32px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    h1 {
-      font-size: 38px;
-      font-weight: 700;
-      letter-spacing: -1px;
-    }
-
-    .desc {
-      margin-top: 14px;
-      color: rgba(255,255,255,0.72);
-      font-size: 15px;
-      line-height: 1.8;
-    }
-
-    .chip {
-      margin: 18px auto 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      font-size: 13px;
-      color: #93c5fd;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #60a5fa;
-      animation: blink 1.5s infinite;
-    }
-
-    .download-card {
-      margin-top: 30px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 18px;
-    }
-
-    .download-title {
-      font-size: 14px;
-      color: rgba(255,255,255,0.65);
-      margin-bottom: 18px;
-    }
-
-    .buttons {
       display: flex;
-      flex-direction: column;
-      gap: 14px;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
     }
 
-    .btn {
-      height: 58px;
-      border-radius: 18px;
-      text-decoration: none;
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--gradient-primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      font-size: 16px;
+      box-shadow: 0 8px 20px rgba(79, 114, 255, 0.30);
+      flex-shrink: 0;
+    }
+
+    .logo-icon svg {
+      width: 26px;
+      height: 26px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-text .brand {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--ios-text-primary);
+      line-height: 1.2;
+    }
+
+    .logo-text .brand-en {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      color: var(--ios-text-tertiary);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(10, 132, 255, 0.12), rgba(99, 102, 241, 0.12));
+      font-size: 12px;
       font-weight: 600;
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
+      color: var(--ios-blue);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
     }
 
-    .btn::before {
+    .badge::before {
       content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,0.2),
-        transparent
-      );
-      transition: 0.8s;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34c759;
+      animation: pulse-dot 1.8s ease-in-out infinite;
     }
 
-    .btn:hover::before {
-      left: 100%;
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
+    /* ============================================
+       Hero
+       ============================================ */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      margin-bottom: 48px;
     }
 
-    .btn-ios {
-      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-      color: white;
-      box-shadow: 0 10px 30px rgba(37,99,235,0.35);
-    }
-
-    .btn-android {
-      background: rgba(255,255,255,0.06);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .wechat-mask {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.92);
-      z-index: 999;
-      padding: 30px;
+    .hero-text {
       text-align: center;
     }
 
-    .wechat-mask.show {
+    .hero-text h2 {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      color: var(--ios-text-primary);
+      margin-bottom: 16px;
+    }
+
+    .hero-text h2 .gradient {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-text p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--ios-text-secondary);
+      max-width: 600px;
+      margin: 0 auto 28px;
+    }
+
+    /* ============================================
+       Download Buttons
+       ============================================ */
+    .actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 28px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      letter-spacing: -0.01em;
+      border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: #fff;
+      box-shadow: var(--shadow-btn);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 16px 32px rgba(63, 96, 255, 0.40);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.30);
+      color: var(--ios-text-primary);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.80);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(148, 163, 184, 0.50);
+    }
+
+    .btn .icon-svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ============================================
+       Phone Mockup
+       ============================================ */
+    .phone-section {
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone {
+      width: 260px;
+      flex-shrink: 0;
+    }
+
+    .phone-frame {
+      border-radius: 36px;
+      background: linear-gradient(180deg, #4f72ff, #2f5eff);
+      padding: 12px;
+      box-shadow: 0 24px 60px rgba(79, 114, 255, 0.28);
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 22px;
+      background: #1a1a2e;
+      border-radius: 0 0 12px 12px;
+      z-index: 2;
+    }
+
+    .phone-notch::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .screen {
+      border-radius: 24px;
+      background: linear-gradient(180deg, #eef0ff, #e2e8f0, #f4f8ff);
+      min-height: 500px;
+      padding: 32px 24px 24px;
+      position: relative;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
     }
 
-    .wechat-arrow {
-      font-size: 72px;
-      margin-bottom: 24px;
-      animation: float 2s infinite ease-in-out;
+    .screen::before {
+      content: "";
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(79, 114, 255, 0.20), transparent 70%);
+      top: -60px;
+      right: -60px;
     }
 
-    .wechat-title {
-      font-size: 28px;
+    .screen-status {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ios-text-primary);
+      letter-spacing: 0.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-status .time {
       font-weight: 700;
-      margin-bottom: 18px;
     }
 
-    .wechat-desc {
-      color: rgba(255,255,255,0.72);
-      line-height: 1.9;
-      font-size: 16px;
+    .screen-status .icons {
+      display: flex;
+      gap: 4px;
+      align-items: center;
     }
 
-    .footer {
-      margin-top: 24px;
-      color: rgba(255,255,255,0.35);
+    .screen-status .icons svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .screen-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 32px rgba(79, 114, 255, 0.25);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-avatar svg {
+      width: 40px;
+      height: 40px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .screen-name {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ios-text-primary);
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-sub {
+      font-size: 13px;
+      color: var(--ios-text-secondary);
+      letter-spacing: 0.02em;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-waves {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      height: 40px;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-waves .bar {
+      width: 4px;
+      border-radius: 4px;
+      background: var(--gradient-primary);
+      animation: wave 1.1s ease-in-out infinite;
+    }
+
+    .screen-waves .bar:nth-child(1) { height: 14px; animation-delay: 0s; }
+    .screen-waves .bar:nth-child(2) { height: 26px; animation-delay: 0.15s; }
+    .screen-waves .bar:nth-child(3) { height: 34px; animation-delay: 0.3s; }
+    .screen-waves .bar:nth-child(4) { height: 22px; animation-delay: 0.45s; }
+    .screen-waves .bar:nth-child(5) { height: 30px; animation-delay: 0.6s; }
+    .screen-waves .bar:nth-child(6) { height: 18px; animation-delay: 0.75s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(0.6); opacity: 0.6; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }
+
+    .screen-tag {
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.90);
       font-size: 12px;
-      line-height: 1.8;
+      font-weight: 500;
+      color: var(--ios-blue);
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(0.95); opacity: 0.4; }
-      50% { transform: scale(1.05); opacity: 0.7; }
-      100% { transform: scale(0.95); opacity: 0.4; }
+    .screen-mini-actions {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
     }
 
-    @keyframes blink {
-      0% { opacity: 1; }
-      50% { opacity: 0.3; }
-      100% { opacity: 1; }
+    .screen-mini-actions .action-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.90);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
     }
 
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-12px); }
-      100% { transform: translateY(0px); }
+    .screen-mini-actions .action-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--ios-text-secondary);
+      fill: none;
+      stroke-width: 1.8;
     }
 
-    @media (max-width: 480px) {
-      .card {
-        padding: 34px 22px;
+    .screen-mini-actions .action-icon.primary svg {
+      stroke: var(--ios-blue);
+    }
+
+    /* ============================================
+       Features (功能卡片)
+       ============================================ */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: var(--ios-card-radius-sm);
+      padding: 24px 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.80);
+      transition: all 0.25s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 32px rgba(148, 163, 184, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(10, 132, 255, 0.10), rgba(99, 102, 241, 0.10));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .feature-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--ios-blue);
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    .feature-card h4 {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--ios-text-primary);
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--ios-text-secondary);
+    }
+
+    /* ============================================
+       Bottom CTA
+       ============================================ */
+    .bottom-cta {
+      background: var(--gradient-primary);
+      border-radius: var(--ios-card-radius-sm);
+      padding: 36px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 14px 34px rgba(79, 114, 255, 0.24);
+    }
+
+    .bottom-cta-text h3 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .bottom-cta-text p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.80);
+    }
+
+    .bottom-download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .bottom-download-btn:active {
+      transform: scale(0.97);
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .bottom-download-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .bottom-download-btn small {
+      display: block;
+      font-weight: 400;
+      font-size: 11px;
+      opacity: 0.70;
+    }
+
+    /* ============================================
+       Footer
+       ============================================ */
+    footer {
+      text-align: center;
+      padding-top: 28px;
+      color: var(--ios-text-tertiary);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    footer a {
+      color: var(--ios-text-tertiary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--ios-blue);
+    }
+
+    /* ============================================
+       Responsive - Tablet
+       ============================================ */
+    @media (max-width: 768px) {
+      .main-card {
+        padding: 28px 20px;
+        border-radius: var(--ios-card-radius-sm);
       }
 
-      h1 {
-        font-size: 32px;
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 36px;
       }
+
+      .hero-text h2 {
+        font-size: 28px;
+      }
+
+      .hero-text p {
+        font-size: 15px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        justify-content: center;
+        padding: 15px 24px;
+        font-size: 15px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .bottom-cta {
+        flex-direction: column;
+        text-align: center;
+        padding: 28px 24px;
+      }
+
+      .bottom-cta-text h3 {
+        font-size: 20px;
+      }
+
+      .bottom-download-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .phone {
+        width: 220px;
+      }
+
+      .screen {
+        min-height: 420px;
+        padding: 28px 18px 20px;
+      }
+    }
+
+    /* ============================================
+       Responsive - Small Phone
+       ============================================ */
+    @media (max-width: 400px) {
+      .container {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .main-card {
+        padding: 20px 14px;
+      }
+
+      .hero-text h2 {
+        font-size: 24px;
+      }
+
+      .phone {
+        width: 180px;
+      }
+
+      .screen {
+        min-height: 340px;
+        padding: 24px 14px 16px;
+      }
+
+      .screen-status {
+        margin-bottom: 24px;
+      }
+    }
+
+    /* ============================================
+       Animations on Load
+       ============================================ */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .main-card {
+      animation: fade-up 0.7s ease both;
+    }
+
+    .hero-text {
+      animation: fade-up 0.7s ease 0.1s both;
+    }
+
+    .phone-section {
+      animation: fade-up 0.7s ease 0.2s both;
+    }
+
+    .features .feature-card {
+      animation: fade-up 0.5s ease both;
+    }
+
+    .features .feature-card:nth-child(1) { animation-delay: 0.15s; }
+    .features .feature-card:nth-child(2) { animation-delay: 0.22s; }
+    .features .feature-card:nth-child(3) { animation-delay: 0.29s; }
+    .features .feature-card:nth-child(4) { animation-delay: 0.36s; }
+
+    .bottom-cta {
+      animation: fade-up 0.7s ease 0.35s both;
+    }
+
+    footer {
+      animation: fade-up 0.7s ease 0.45s both;
     }
   </style>
 </head>
 <body>
-
-<canvas id="starCanvas"></canvas>
-<div class="gradient-bg"></div>
-
-<div class="wechat-mask" id="wechatMask">
-  <div class="wechat-arrow">↗</div>
-  <div class="wechat-title">请在浏览器中打开</div>
-  <div class="wechat-desc">
-    微信内无法直接下载安装应用。<br />
-    请点击右上角菜单，选择：<br /><br />
-    <strong>“在浏览器中打开”</strong>
+  <!-- 背景光晕 -->
+  <div class="bg-glow">
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+    <div class="glow three"></div>
   </div>
-</div>
 
-<div class="container">
-  <div class="card">
+  <div class="container">
+    <div class="main-card">
 
-    <div class="logo-wrap">
-      <div class="logo-glow"></div>
-      <div class="logo">
-        <img src="logo.png" alt="QUEZ ONE" />
-      </div>
-    </div>
-
-    <h1>QUEZ ONE</h1>
-
-    <div class="desc">
-      AI 智能录音与转写平台<br />
-      Bluetooth Recording · Cloud AI · Smart Summary
-    </div>
-
-    <div class="chip">
-      <div class="dot"></div>
-      正在识别设备并自动跳转
-    </div>
-
-    <div class="download-card">
-      <div class="download-title">
-        如果没有自动跳转，可手动下载安装
-      </div>
-
-      <div class="buttons">
-        <a
-          class="btn btn-ios"
-          href="https://testflight.apple.com/join/JzE8YS9E"
-        >
-           下载 iOS 测试版
+      <!-- Header -->
+      <header class="header">
+        <a class="logo" href="#">
+          <div class="logo-icon">
+            <!-- 声波图标 — 与 RecVerse 品牌一致 -->
+            <svg viewBox="0 0 24 24">
+              <path d="M3 15v-2M7 17V7M11 19V5M15 18V6M19 14v-4" />
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="brand">星启·天籁</span>
+            <span class="brand-en">QUEZ · AI Digital Twin</span>
+          </div>
         </a>
+        <span class="badge">内测进行中</span>
+      </header>
 
-        <a
-          class="btn btn-android"
-          href="http://img.aiipu.com/app-release1778666515462.apk"
-        >
-          🤖 下载 Android 版本
-        </a>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-text">
+          <h2>
+            你的 <span class="gradient">AI 数字分身</span><br />
+            已正式上线
+          </h2>
+          <p>
+            基于蓝牙录音设备与 AI 能力打造的新一代智能录音平台。
+            支持录音转写、AI 总结、长期记忆、意图理解与云端同步，
+            帮你构建真正属于自己的数字分身。
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://testflight.apple.com/join/JzE8YS9E" target="_blank">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" rx="4" stroke="currentColor" fill="none" stroke-width="1.8"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" fill="none" stroke-width="1.8"/>
+                <circle cx="16" cy="8" r="1" fill="currentColor"/>
+              </svg>
+              iPhone 测试版
+            </a>
+            <a class="btn btn-secondary" href="http://img.aiipu.com/app-release1778666515462.apk" target="_blank">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <circle cx="12" cy="5" r="2.5" stroke="currentColor" fill="none" stroke-width="1.8"/>
+                <path d="M5 19c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="currentColor" fill="none" stroke-width="1.8"/>
+                <path d="M12 12v6" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M10 16l2 2 2-2" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Android 测试版
+            </a>
+          </div>
+        </div>
+
+        <!-- Phone Mockup -->
+        <div class="phone-section">
+          <div class="phone">
+            <div class="phone-frame">
+              <div class="screen">
+                <!-- Status Bar -->
+                <div class="screen-status">
+                  <span class="time">9:41</span>
+                  <div class="icons">
+                    <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                  </div>
+                </div>
+                <!-- Notch -->
+                <div class="phone-notch"></div>
+                <!-- Avatar -->
+                <div class="screen-avatar">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+                  </svg>
+                </div>
+                <div class="screen-name">我的数字分身</div>
+                <div class="screen-sub">7 × 24 小时在线</div>
+                <!-- Wave Animation -->
+                <div class="screen-waves">
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                </div>
+                <div class="screen-tag">✦ AI 聆听中</div>
+                <!-- Action Icons -->
+                <div class="screen-mini-actions">
+                  <div class="action-icon primary">
+                    <svg viewBox="0 0 24 24"><path d="M22 2L11 13" /><path d="M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+                  </div>
+                  <div class="action-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                  </div>
+                  <div class="action-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                  </div>
+                  <div class="action-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" /></svg>
+          </div>
+          <h4>双场景录音</h4>
+          <p>支持现场与通话双录，高保真采集音频内容，自动区分不同场景。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+          </div>
+          <h4>超长续航</h4>
+          <p>40 小时持续工作能力，随时记录灵感与会议内容，无需频繁充电。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+          </div>
+          <h4>AI 技能矩阵</h4>
+          <p>AI 总结、翻译、写作、日程管理等多项能力随时调用。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5A10 10 0 0 0 12 2z" /></svg>
+          </div>
+          <h4>长期记忆</h4>
+          <p>记录你的习惯与偏好，主动理解上下文，打造真正懂你的 AI 助手。</p>
+        </div>
       </div>
-    </div>
 
-    <div class="footer">
-      iOS 版本需提前安装 TestFlight<br />
-      © 2026 QUEZ ONE
-    </div>
+      <!-- Bottom CTA -->
+      <div class="bottom-cta">
+        <div class="bottom-cta-text">
+          <h3>选择你的星启</h3>
+          <p>当前提供内测安装版本，下载即可体验 AI 数字分身与智能录音能力。</p>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="bottom-download-btn" href="https://testflight.apple.com/join/JzE8YS9E" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            iPhone 测试版
+            <small>TestFlight</small>
+          </a>
+          <a class="bottom-download-btn" href="http://img.aiipu.com/app-release1778666515462.apk" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Android 测试版
+            <small>APK 下载</small>
+          </a>
+        </div>
+      </div>
 
+      <!-- Footer -->
+      <footer>
+        &copy; 2026 星启·天籁 AI &middot; All Rights Reserved
+      </footer>
+    </div>
   </div>
-</div>
-
-<script>
-  const IOS_URL = 'https://testflight.apple.com/join/JzE8YS9E';
-  const ANDROID_URL = 'http://img.aiipu.com/app-release1778666515462.apk';
-
-  const ua = navigator.userAgent.toLowerCase();
-
-  const isWeChat = /micromessenger/.test(ua);
-
-  if (isWeChat) {
-    document.getElementById('wechatMask').classList.add('show');
-  } else {
-    setTimeout(() => {
-      if (/iphone|ipad|ipod/.test(ua)) {
-        window.location.href = IOS_URL;
-      } else if (/android/.test(ua)) {
-        window.location.href = ANDROID_URL;
-      }
-    }, 1800);
-  }
-
-  const canvas = document.getElementById('starCanvas');
-  const ctx = canvas.getContext('2d');
-
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const stars = [];
-
-  for (let i = 0; i < 120; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 1.6,
-      speed: Math.random() * 0.3 + 0.05,
-      opacity: Math.random()
-    });
-  }
-
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    stars.forEach((star) => {
-      ctx.beginPath();
-      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
-      ctx.fill();
-
-      star.y += star.speed;
-
-      if (star.y > canvas.height) {
-        star.y = 0;
-        star.x = Math.random() * canvas.width;
-      }
-    });
-
-    requestAnimationFrame(drawStars);
-  }
-
-  drawStars();
-
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-</script>
-
 </body>
 </html>
